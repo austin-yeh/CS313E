@@ -49,15 +49,13 @@ class Point(object):
 class Sphere(object):
     # constructor with default values
     def __init__(self, x=0, y=0, z=0, radius=1):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.center = Point(x, y, z)
         self.radius = radius
 
     # returns string representation of a Sphere of the form:
     # Center: (x, y, z), Radius: value
     def __str__(self):
-        return f"Center: ({self.x}, {self.y}, {self.z}), Radius: {self.radius}"
+        return f"Center: {self.center}, Radius: {self.radius}"
 
     # compute surface area of Sphere
     # returns a floating point number
@@ -73,14 +71,13 @@ class Sphere(object):
     # p is Point object
     # returns a Boolean
     def is_inside_point(self, p):
-        return math.sqrt((self.x - p.x) ** 2 + (self.y - p.y) ** 2 + (self.z - p.z) ** 2) < self.radius
+        return self.center.distance(p) < self.radius
 
     # determine if another Sphere is strictly inside this Sphere
     # other is a Sphere object
     # returns a Boolean
     def is_inside_sphere(self, other):
-        return self.radius > math.sqrt(
-            (self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.z - other.z) ** 2) + other.radius
+        return self.radius > self.center.distance(other.center) + other.radius
 
     # determine if a Cube is strictly inside this Sphere
     # determine if the eight corners of the Cube are strictly
@@ -88,7 +85,7 @@ class Sphere(object):
     # a_cube is a Cube object
     # returns a Boolean
     def is_inside_cube(self, a_cube):
-        return False
+        return self.radius > math.pow(a_cube.side / 2, 2)
 
     # determine if a Cylinder is strictly inside this Sphere
     # a_cyl is a Cylinder object
@@ -102,7 +99,7 @@ class Sphere(object):
     # or not strictly outside each other
     # returns a Boolean
     def does_intersect_sphere(self, other):
-        return False
+        return self.center.distance(other.center) < self.radius + other.radius and not self.is_inside_sphere(other)
 
     # determine if a Cube intersects this Sphere
     # the Cube and Sphere intersect if they are not
@@ -117,7 +114,7 @@ class Sphere(object):
     # all eight corners of the Cube are on the Sphere
     # returns a Cube object
     def circumscribe_cube(self):
-        return False
+        return Cube(self.center.x, self.center.y, self.center.z, self.radius * math.sqrt(2))
 
 
 class Cube(object):
@@ -125,15 +122,13 @@ class Cube(object):
     # and side. The faces of the Cube are parallel to x-y, y-z,
     # and x-z planes.
     def __init__(self, x=0, y=0, z=0, side=1):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.center = Point(x, y, z)
         self.side = side
 
     # string representation of a Cube of the form:
     # Center: (x, y, z), Side: value
     def __str__(self):
-        return f"Center: ({self.x}, {self.y}, {self.z}), Side: {self.side}"
+        return f"Center: {self.center}, Side: {self.side}"
 
     # compute the total surface area of Cube (all 6 sides)
     # returns a floating point number
@@ -149,19 +144,27 @@ class Cube(object):
     # p is a point object
     # returns a Boolean
     def is_inside_point(self, p):
-        return False
+        return self.center.x + self.side / 2 > p.x > self.center.x - self.side / 2 \
+               and self.center.y + self.side / 2 > p.y > self.center.y - self.side / 2 \
+               and self.center.z + self.side / 2 > p.z > self.center.z - self.side / 2
 
     # determine if a Sphere is strictly inside this Cube
     # a_sphere is a Sphere object
     # returns a Boolean
     def is_inside_sphere(self, a_sphere):
-        return False
+        limit = self.side / 2 - a_sphere.radius
+        return self.center.x - limit < a_sphere.center.x < self.center.x + limit \
+               and self.center.y - limit < a_sphere.center.y < self.center.y + limit \
+               and self.center.z - limit < a_sphere.center.z < self.center.z + limit and limit > 0
 
     # determine if another Cube is strictly inside this Cube
     # other is a Cube object
     # returns a Boolean
     def is_inside_cube(self, other):
-        return False
+        limit = (self.side - other.side) / 2
+        return self.center.x - limit < other.center.x < self.center.x + limit \
+               and self.center.y - limit < other.center.y < self.center.y + limit \
+               and self.center.z - limit < other.center.z < self.center.z + limit and limit > 0
 
     # determine if a Cylinder is strictly inside this Cube
     # a_cyl is a Cylinder object
@@ -182,7 +185,7 @@ class Cube(object):
     # other is a Cube object
     # returns a floating point number
     def intersection_volume(self, other):
-        return False
+        return 0.0
 
     # return the largest Sphere object that is inscribed
     # by this Cube
@@ -190,7 +193,7 @@ class Cube(object):
     # Cube are tangential planes of the Sphere
     # returns a Sphere object
     def inscribe_sphere(self):
-        return False
+        return Sphere(self.center.x, self.center.y, self.center.z, self.side / 2)
 
 
 class Cylinder(object):
@@ -198,16 +201,14 @@ class Cylinder(object):
     # radius and height. The main axis of the Cylinder is along the
     # z-axis and height is measured along this axis
     def __init__(self, x=0, y=0, z=0, radius=1, height=1):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.center = Point(x, y, z)
         self.radius = radius
         self.height = height
 
     # returns a string representation of a Cylinder of the form:
     # Center: (x, y, z), Radius: value, Height: value
     def __str__(self):
-        return f"Center: ({self.x}, {self.y}, {self.z}), Radius: {self.radius}, Height: {self.height}"
+        return f"Center: {self.center}, Radius: {self.radius}, Height: {self.height}"
 
     # compute surface area of Cylinder
     # returns a floating point number
@@ -274,7 +275,6 @@ def main():
     # read the coordinates of the center and side of cubeA
     input_lst = input().split(" ")
     cubeA = Cube(float(input_lst[0]), float(input_lst[1]), float(input_lst[2]), float(input_lst[3]))
-    print(cubeA)
     # read the coordinates of the center and side of cubeB
     input_lst = input().split(" ")
     cubeB = Cube(float(input_lst[0]), float(input_lst[1]), float(input_lst[2]), float(input_lst[3]))
@@ -289,6 +289,7 @@ def main():
     cylB = Cylinder(float(input_lst[0]), float(input_lst[1]), float(input_lst[2]), float(input_lst[3]),
                     float(input_lst[4]))
 
+    print(sphereA.circumscribe_cube())
     # print if the distance of p from the origin is greater
     # than the distance of q from the origin
     print(
@@ -313,15 +314,15 @@ greater than the distance of Point q from the origin")
     print(f"Volume of the largest Cube that is circumscribed by sphereA (is / is not) greater than the volume of cylA")
     print()
     # print if Point p is inside cubeA
-    print(f"Point p (is / is not ) inside cubeA")
+    print(f"Point p {('is not', 'is')[cubeA.is_inside_point(p)]} inside cubeA")
     # print if sphereA is inside cubeA
-    print(f"sphereA (is / is not) inside cubeA")
+    print(f"sphereA {('is not', 'is')[cubeA.is_inside_sphere(sphereA)]} inside cubeA")
     # print if cubeB is inside cubeA
-    print(f"cubeB (is / is not) inside cubeA")
+    print(f"cubeB {('is not', 'is')[cubeA.is_inside_cube(cubeB)]} inside cubeA")
     # print if cylA is inside cubeA
-    print(f"cylA (is / is not) inside cubeA")
+    print(f"cylA {('is not', 'is')[cubeA.is_inside_cylinder(cylA)]} inside cubeA")
     # print if cubeA intersects with cubeB
-    print(f"cubeA (does / does not) intersect cubeB")
+    print(f"cubeA {('does not', 'does')[cubeA.does_intersect_cube(cubeB)]} intersect cubeB")
     # print if the intersection volume of cubeA and cubeB
     # is greater than the volume of sphereA
     print(f"Intersection volume of cubeA and cubeB (is / is not) greater than the volume of sphereA")
