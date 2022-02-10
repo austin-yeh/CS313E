@@ -20,23 +20,14 @@
 
 import math
 
-
-# Input: n is an integer
-# Output: function returns the minimum square integer that is greater than n
-def min_greater_square(n):
-    for i in range(n, n * (n + 1)):
-        if math.sqrt(i) % 1 == 0:
-            return i
-
-
 # Input: strng is a string of 100 or less of upper case, lower case,
 #        and digits
 # Output: function returns an encrypted string 
 def encrypt(strng):
     new_strng = ''
     n = len(strng)
-    side = int(math.sqrt(min_greater_square(n)))
-    padded_strng = str(strng + '*' * (min_greater_square(n) - n))
+    side = math.ceil(math.sqrt(n))
+    padded_strng = str(strng + '*' * (math.pow(math.ceil(math.sqrt(n)), 2) - n))
     for i in range(side * (side - 1), side ** 2):
         for j in range(side):
             new_strng += padded_strng[i - side * j]
@@ -49,7 +40,7 @@ def encrypt(strng):
 def decrypt(strng):
     new_strng = ''
     n = len(strng)
-    side = int(math.sqrt(min_greater_square(n)))
+    side = math.ceil(math.sqrt(n))
     square = [[0 for i in range(side)] for j in range(side)]
     i = side ** 2 - len(strng)
     for c in range(side):
