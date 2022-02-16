@@ -314,11 +314,13 @@ class Cylinder(object):
     # other is Cylinder object
     # returns a Boolean
     def is_inside_cylinder(self, other):
-        try:
-            return Cylinder(self.center.x, self.center.y, self.center.z, self.radius - other.radius,
-                            self.height - other.height).is_inside_point(other.center)
-        except ValueError:
-            return False
+        z_overlap = min(self.center.z + self.height / 2, other.center.z + other.height / 2) - max(
+            self.center.z - self.height / 2, other.center.z - other.height / 2)
+        if z_overlap == other.height and self.radius > math.sqrt(
+                math.pow(self.center.x - other.center.x, 2) + math.pow(self.center.y - other.center.y,
+                                                                       2)) + other.radius:
+            return True
+        return False
 
     # determine if another Cylinder intersects this Cylinder
     # two Cylinder object intersect if they are not strictly
@@ -326,9 +328,10 @@ class Cylinder(object):
     # other is a Cylinder object
     # returns a Boolean
     def does_intersect_cylinder(self, other):
-        shifted_center = other.center - self.center
-        return Cylinder(radius=self.radius + other.radius, height=self.height + 2 * other.radius).is_inside_point(
-            shifted_center) and not self.is_inside_cylinder(other) and not other.is_inside_cylinder(self)
+        if self.is_inside_cylinder(other) or other.is_inside_cylinder(self):
+            return False
+        return Cylinder(self.center.x, self.center.y, self.center.z, self.radius + other.radius,
+                        self.height + other.height).is_inside_point(other.center)
 
 
 def main():
@@ -415,6 +418,8 @@ greater than the distance of Point q from the origin")
     print(f"cylB {('is not', 'is')[cylA.is_inside_cylinder(cylB)]} inside cylA")
     # print if cylB intersects with cylA
     print(f"cylB {('does not', 'does')[cylA.does_intersect_cylinder(cylB)]} intersect cylA")
+    # print(cylA.is_inside_cylinder(cylB))
+    # print(cylB.is_inside_cylinder(cylA))
 
 
 if __name__ == "__main__":
