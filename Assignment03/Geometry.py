@@ -141,8 +141,31 @@ class Sphere(object):
     # a_cube is a Cube object
     # returns a Boolean
     def does_intersect_cube(self, a_cube):
-        return Sphere(self.center.x, self.center.y, self.center.z, self.radius + a_cube.side).is_inside_point(
-            a_cube.center) and not self.is_inside_cube(a_cube) and not a_cube.is_inside_sphere(self)
+        a = []
+        p1 = Point(a_cube.center.x - a_cube.side / 2, a_cube.center.y + a_cube.side / 2,
+                   a_cube.center.z - a_cube.side / 2)
+        p2 = Point(a_cube.center.x - a_cube.side / 2, a_cube.center.y + a_cube.side / 2,
+                   a_cube.center.z + a_cube.side / 2)
+        p3 = Point(a_cube.center.x + a_cube.side / 2, a_cube.center.y + a_cube.side / 2,
+                   a_cube.center.z - a_cube.side / 2)
+        p4 = Point(a_cube.center.x + a_cube.side / 2, a_cube.center.y + a_cube.side / 2,
+                   a_cube.center.z + a_cube.side / 2)
+        p5 = Point(a_cube.center.x - a_cube.side / 2, a_cube.center.y - a_cube.side / 2,
+                   a_cube.center.z + a_cube.side / 2)
+        p6 = Point(a_cube.center.x + a_cube.side / 2, a_cube.center.y - a_cube.side / 2,
+                   a_cube.center.z - a_cube.side / 2)
+        p7 = Point(a_cube.center.x - a_cube.side / 2, a_cube.center.y - a_cube.side / 2,
+                   a_cube.center.z - a_cube.side / 2)
+        p8 = Point(a_cube.center.x + a_cube.side / 2, a_cube.center.y - a_cube.side / 2,
+                   a_cube.center.z + a_cube.side / 2)
+
+        a.extend((p1, p2, p3, p4, p5, p6, p7, p8))
+        j = 0
+        for i in range(0, 8):
+            if self.is_inside_point(a[i]) == True:
+                j += 1
+
+        return j < 8 and j > 0 and not self.is_inside_cube(a_cube) and not a_cube.is_inside_sphere(self)
 
     # return the largest Cube object that is circumscribed
     # by this Sphere
