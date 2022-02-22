@@ -1,6 +1,6 @@
 #  File: Geometry.py
 
-#  Description:
+#  Description: A code with classes of points, spheres, cubes, and cylinders with some build in function of cheking if each is in another, intersecting with other, the area of intersection, its own area and volume, and each's status (initial center, side length, height, etc). Read a input file with each line having a coordinate of a point, and side leghth if its a cube or radius of its a sphere pr radius and height if it is a cylinder. Return a output that answers some question based on the functions mentioned above.
 
 #  Student Name: Austin Yeh
 
