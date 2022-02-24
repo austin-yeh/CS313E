@@ -43,6 +43,7 @@ def linear_search(n, k):
     lst = [sum_series(i, k) for i in range(n + 1)]
     for i in range(n + 1):
         if sum_series(i, k) >= n:
+            print("Linear Search: ", i)
             return i
 
 
@@ -60,12 +61,14 @@ def binary_search(n, k):
             low = mid + 1
             try:
                 if sum_series(mid + 1, k) >= n:
+                    print("Binary Search: ", mid + 1)
                     return mid + 1
             except IndexError:
                 pass
         elif sum_series(mid, k) > n:
             high = mid - 1
         else:
+            print("Binary Search: ", mid)
             return mid
     return -1
 
