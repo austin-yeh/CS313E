@@ -20,7 +20,6 @@
 import math
 import sys
 import time
-import matplotlib.pyplot as plt
 
 
 # Input: v an integer representing the minimum lines of code and
@@ -40,10 +39,8 @@ def sum_series(v, k):
 #        k an integer representing the productivity factor
 # Output: returns v the minimum lines of code to write using linear search
 def linear_search(n, k):
-    lst = [sum_series(i, k) for i in range(n + 1)]
     for i in range(n + 1):
         if sum_series(i, k) >= n:
-            print("Linear Search: ", i)
             return i
 
 
@@ -51,7 +48,6 @@ def linear_search(n, k):
 #        k an integer representing the productivity factor
 # Output: returns v the minimum lines of code to write using binary search
 def binary_search(n, k):
-    lst = [sum_series(i, k) for i in range(n + 1)]
     low = 0
     high = n
     mid = 0
@@ -61,14 +57,12 @@ def binary_search(n, k):
             low = mid + 1
             try:
                 if sum_series(mid + 1, k) >= n:
-                    print("Binary Search: ", mid + 1)
                     return mid + 1
             except IndexError:
                 pass
         elif sum_series(mid, k) > n:
             high = mid - 1
         else:
-            print("Binary Search: ", mid)
             return mid
     return -1
 
