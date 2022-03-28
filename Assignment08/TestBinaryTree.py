@@ -125,13 +125,14 @@ class Tree(object):
     # Returns the list of the node that you see from left side
     # The order of the output should be from top to down
     def left_side_view(self):
-        if self.root == None:
-            return []
-        return []
+        lst = []
+        for i in range(self.get_height()):
+            lst.append(self.get_level(i)[0].data)
+        return lst
 
     # returns the sum of the value of all leaves.
     # a leaf node does not have any children.
-    def sum_leaf_nodes(self):
+    def sum_leaf_node(self):
         children_lst = [self.root]
         while True:
             new_lst = []
@@ -180,7 +181,7 @@ def main():
 
     print("Tree range is: ",   t1.range())
     print("Tree left side view is: ", t1.left_side_view())
-    print("Sum of leaf nodes is: ", t1.sum_leaf_nodes())
+    print("Sum of leaf nodes is: ", t1.sum_leaf_node())
     print("##########################")
 
 # Another Tree for test.
@@ -193,7 +194,7 @@ def main():
 
     print("Tree range is: ",   t2.range())
     print("Tree left side view is: ", t2.left_side_view())
-    print("Sum of leaf nodes is: ", t2.sum_leaf_nodes())
+    print("Sum of leaf nodes is: ", t2.sum_leaf_node())
     print("##########################")
 # Another Tree
     line = sys.stdin.readline()
@@ -205,7 +206,7 @@ def main():
 
     print("Tree range is: ",   t3.range())
     print("Tree left side view is: ", t3.left_side_view())
-    print("Sum of leaf nodes is: ", t3.sum_leaf_nodes())
+    print("Sum of leaf nodes is: ", t3.sum_leaf_node())
     print("##########################")
 
 
