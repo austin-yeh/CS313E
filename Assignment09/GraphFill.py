@@ -173,7 +173,19 @@ class ImageGraph:
 		self.print_image()
 
 		# raise NotImplementedError("Remove this exception and implement the bfs algorithm here.")
-		
+		q = Queue()
+		q.enqueue(self.nodes[start_index])
+		original_color = self.nodes[start_index].color
+		while not q.is_empty():
+			for _ in range(q.size()):
+				node = q.dequeue()
+				if node.color == original_color:
+					node.visited = True
+					node.set_color(color)
+					self.print_image()
+					for i in node.edges:
+						if not self.nodes[i].visited:
+							q.enqueue(self.nodes[i])
 
 	# implement your dfs algorithm here. Call print_image() after coloring a node
 	# Input: graph is the graph containing the nodes
@@ -187,14 +199,30 @@ class ImageGraph:
 		self.print_image()
 
 		# raise NotImplementedError("Remove this exception and implement the dfs algorithm here.")
-
+		s = Stack()
+		s.push(self.nodes[start_index])
+		original_color = self.nodes[start_index].color
+		self.nodes[start_index].visited = True
+		self.nodes[start_index].set_color(color)
+		self.print_image()
+		while not s.is_empty():
+			current = s.peek()
+			for i in current.edges:
+				if self.nodes[i].color == original_color:
+					self.nodes[i].visited = True
+					self.nodes[i].set_color(color)
+					self.print_image()
+					s.push(self.nodes[i])
+					break
+			else:
+				s.pop()
 
 def main():
 	dimension = int(sys.stdin.readline())
 	graph = ImageGraph(dimension)
 
 	for _ in range(int(sys.stdin.readline())):
-		line = sys.stdin.readline().split(',')
+		line = sys.stdin.readline().strip().split(',')
 		cnode = ColorNode(int(line[0]), int(line[1]), line[2])
 		graph.nodes.append(cnode)
 
@@ -202,8 +230,6 @@ def main():
 		line = sys.stdin.readline().strip().split(',')
 		graph.nodes[int(line[0])].add_edge(int(line[1]))
 		graph.nodes[int(line[1])].add_edge(int(line[0]))
-
-	graph.print_image()
 
 	# print matrix
 	graph.print_adjacency_matrix()
